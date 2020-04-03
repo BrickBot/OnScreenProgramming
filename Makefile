@@ -1,5 +1,10 @@
-CC=/cygnus/cygwin-b20/H-i586-cygwin32/bin/h8300-hms-gcc
-LD=/cygnus/cygwin-b20/H-i586-cygwin32/bin/h8300-hms-ld
+CROSSTOOLPREFIX=/usr/bin/h8300-hms-
+CC=$(CROSSTOOLPREFIX)gcc
+LD=$(CROSSTOOLPREFIX)ld
+NM=$(CROSSTOOLPREFIX)nm
+OBJCOPY=$(CROSSTOOLPREFIX)objcopy
+OBJDUMP=$(CROSSTOOLPREFIX)objdump
+
 CFLAGS=-O2 -Wall -I../include -fno-builtin -fomit-frame-pointer -Wno-unused -Wno-uninitialized
 LDFLAGS=-T ../h8300.rcx
 KOBJECTS=../kmain.o ../mm.o ../systime.o ../tm.o ../semaphore.o ../conio.o \
@@ -16,12 +21,12 @@ onscreen.coff: onscreen.o
 	chmod a-x onscreen.coff
 
 onscreen.srec: onscreen.coff
-	/cygnus/cygwin-b20/H-i586-cygwin32/bin/h8300-hms-objcopy -I coff-h8300 -O srec  onscreen.coff onscreen.srec
+	$(OBJCOPY) -I coff-h8300 -O srec  onscreen.coff onscreen.srec
 	chmod a-x onscreen.srec
 
 onscreen.dis2: onscreen.coff
-	/cygnus/cygwin-b20/H-i586-cygwin32/bin/h8300-hms-nm onscreen.coff | sort -u > onscreen.map
-	/cygnus/cygwin-b20/H-i586-cygwin32/bin/h8300-hms-objdump --disassemble-all --no-show-raw-insn -m h8300 onscreen.coff > onscreen.dis
+	$(NM) onscreen.coff | sort -u > onscreen.map
+	$(OBJDUMP) --disassemble-all --no-show-raw-insn -m h8300 onscreen.coff > onscreen.dis
 	../util/merge-map onscreen.map onscreen.dis > onscreen.dis2
 	rm onscreen.map onscreen.dis
 
